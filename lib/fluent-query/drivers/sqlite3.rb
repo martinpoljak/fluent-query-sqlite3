@@ -1,4 +1,6 @@
 # encoding: utf-8
+require "hash-utils/hash"   # >= 0.15.0
+
 require "fluent-query/drivers/dbi"
 require "fluent-query/drivers/exception"
 
@@ -152,6 +154,16 @@ module FluentQuery
                 return connection_string
             end
 
+            ##
+            # Returns authentification settings.
+            # @return [Array] with username and password
+            #
+            
+            public
+            def authentification
+                @_nconnection_settings.get_values(:user, :password)
+            end
+            
             ##
             # Executes query conditionally.
             #
