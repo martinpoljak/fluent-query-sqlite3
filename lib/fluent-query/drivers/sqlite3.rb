@@ -1,6 +1,4 @@
 # encoding: utf-8
-require "hash-utils/hash"   # >= 0.15.0
-
 require "fluent-query/drivers/dbi"
 require "fluent-query/drivers/exception"
 
@@ -14,95 +12,12 @@ module FluentQuery
          class SQLite3 < FluentQuery::Drivers::DBI
 
             ##
-            # Contains relevant methods index for this driver.
-            #
-                
-            RELEVANT = [:select, :insert, :update, :delete, :begin, :commit, :union]
-
-            ##
-            # Contains ordering for typicall queries.
-            #
-            
-            ORDERING = {
-                :select => [
-                    :select, :from, :join, :groupBy, :having, :where, :orderBy, :limit, :offset
-                ],
-                :insert => [
-                    :insert, :values
-                ],
-                :update => [
-                    :update, :set, :where
-                ],
-                :delete => [
-                    :delete, :where
-                ],
-                :union => [
-                    :union
-                ]
-            }
-
-            ##
-            # Contains operators list.
-            #
-            # Operators are defined as tokens whose multiple parameters in Array
-            # are appropriate to join by itself.
-            #
-            
-            OPERATORS = {
-                :and => "AND",
-                :or => "OR"
-            }
-
-            ##
-            # Indicates, appropriate token should be present by one real token, but more input tokens.
-            #
-
-            AGREGATE = [:where, :orderBy, :select]
-
-            ##
-            # Indicates token aliases.
-            #
-
-            ALIASES = {
-                :leftJoin => :join,
-                :rightJoin => :join,
-                :fullJoin => :join
-            }
-
-            ##
-            # Indicates tokens already required.
-            #
-            
-            protected
-            @_tokens_required
-
-            ##
             # Known tokens index.
             # (internal cache)
             #
 
             @@__known_tokens = Hash::new do |hash, key| 
                 hash[key] = { }
-            end
-
-            ##
-            # Initializes driver.
-            #
-
-            public
-            def initialize(connection)
-                super(connection)
-
-                @relevant = self.class::RELEVANT
-                @ordering = self.class::ORDERING
-                @operators = self.class::OPERATORS
-                @aliases = self.class::ALIASES
-
-                self.class::AGREGATE.each do |i| 
-                    @agregate[i] = true
-                end
-                
-                @_tokens_required = { }
             end
 
             ##
@@ -116,6 +31,16 @@ module FluentQuery
 
 
             ##### EXECUTING
+
+            ##
+            # Returns the DBI driver name.
+            # @return [String] driver name
+            #
+            
+            public
+            def driver_name
+                "SQLite3"
+            end
 
             ##
             # Opens the connection.
@@ -161,35 +86,9 @@ module FluentQuery
             
             public
             def authentification
-                @_nconnection_settings.get_values(:user, :password)
+                @_nconnection_settings.take_values(:username, :password)
             end
             
-            ##
-            # Executes query conditionally.
-            #
-            # If query isn't suitable for executing, returns it. In otherwise
-            # returns result or number of changed rows.
-            #
-
-            public
-            def execute_conditionally(query, sym, *args, &block)
-                case query.type
-                    when :insert
-                        if (args[0].kind_of? Symbol) and (args[1].kind_of? Hash)
-                            result = query.do!
-                        end
-                    when :begin
-                        if args.empty?
-                            result = query.execute!
-                        end
-                    when :commit, :rollback
-                        result = query.execute!
-                    else
-                        result = nil
-                end
-                
-                return result
-            end
         end
     end
 end
