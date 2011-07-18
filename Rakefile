@@ -15,10 +15,10 @@ require 'jeweler'
 
 Jeweler::Tasks.new do |gem|
   # gem is a Gem::Specification... see http://docs.rubygems.org/read/chapter/20 for more options
-  gem.name = "fluent-query-mysql"
-  gem.homepage = "http://github.com/martinkozak/fluent-query-mysql"
+  gem.name = "fluent-query-sqlite3"
+  gem.homepage = "http://github.com/martinkozak/fluent-query-sqlite3"
   gem.license = "MIT"
-  gem.summary = 'MySQL support for the Fluent Query.'
+  gem.summary = 'SQlite3 support for the Fluent Query. Fluent Query is cool way how to write SQL queries in Ruby.'
   gem.email = "martinkozak@martinkozak.net"
   gem.authors = ["Martin Kozák"]
   # Include your dependencies below. Runtime dependencies are required when using your gem,
